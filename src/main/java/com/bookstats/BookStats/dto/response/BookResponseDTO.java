@@ -1,5 +1,6 @@
-package com.bookstats.BookStats.dto;
+package com.bookstats.BookStats.dto.response;
 
+import com.bookstats.BookStats.dto.GenreDTO;
 import com.bookstats.BookStats.entity.Book;
 import lombok.Data;
 

@@ -1,4 +1,4 @@
-package com.bookstats.BookStats.dto;
+package com.bookstats.BookStats.dto.request;
 
 import jakarta.validation.constraints.*;
 import lombok.Data;

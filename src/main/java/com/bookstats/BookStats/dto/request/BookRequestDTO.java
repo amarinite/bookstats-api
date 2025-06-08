@@ -1,9 +1,12 @@
-package com.bookstats.BookStats.dto;
+package com.bookstats.BookStats.dto.request;
 
 import com.bookstats.BookStats.entity.Book;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 import org.hibernate.validator.constraints.URL;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 public class BookRequestDTO {
@@ -35,4 +38,5 @@ public class BookRequestDTO {
     @URL(message = "Cover URL must be a valid URL")
     private String coverUrl;
 
+    private Set<Long> genreIds = new HashSet<>();
 }

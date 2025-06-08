@@ -1,4 +1,4 @@
-package com.bookstats.BookStats.dto;
+package com.bookstats.BookStats.dto.response;
 
 import com.bookstats.BookStats.entity.UserBook;
 import lombok.Data;
