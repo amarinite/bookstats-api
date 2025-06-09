@@ -29,23 +29,15 @@ public interface UserBookRepository extends JpaRepository<UserBook, Long> {
     @Query("SELECT AVG(ub.rating) FROM UserBook ub WHERE ub.user.id = :userId AND ub.rating IS NOT NULL")
     Double getAverageRatingByUserId(@Param("userId") Long userId);
 
-    // Custom method for user reading statistics
-    @Query("""
-        SELECT new com.bookstats.dto.UserReadingStatsDTO(
-            u.id,
-            u.username,
-            CAST(COUNT(CASE WHEN ub.status = 'COMPLETED' THEN 1 END) AS integer),
-            CAST(COUNT(CASE WHEN ub.status = 'READING' THEN 1 END) AS integer),
-            CAST(COUNT(CASE WHEN ub.status = 'WANT_TO_READ' THEN 1 END) AS integer),
-            AVG(CASE WHEN ub.rating IS NOT NULL THEN ub.rating END),
-            CAST(SUM(CASE WHEN ub.status = 'COMPLETED' THEN b.pages ELSE 0 END) AS integer),
-            null
-        )
-        FROM User u
-        LEFT JOIN u.userBooks ub
-        LEFT JOIN ub.book b
-        WHERE u.id = :userId
-        GROUP BY u.id, u.username
-    """)
-    UserReadingStatsDTO getUserReadingStats(@Param("userId") Long userId);
+    @Query("SELECT COUNT(ub) FROM UserBook ub WHERE ub.user.id = :userId AND ub.status = 'COMPLETED'")
+    Long countCompletedBooksByUserId(@Param("userId") Long userId);
+
+    @Query("SELECT COUNT(ub) FROM UserBook ub WHERE ub.user.id = :userId AND ub.status = 'READING'")
+    Long countReadingBooksByUserId(@Param("userId") Long userId);
+
+    @Query("SELECT COUNT(ub) FROM UserBook ub WHERE ub.user.id = :userId AND ub.status = 'WANT_TO_READ'")
+    Long countWantToReadBooksByUserId(@Param("userId") Long userId);
+
+    @Query("SELECT SUM(b.pages) FROM UserBook ub JOIN ub.book b WHERE ub.user.id = :userId AND ub.status = 'COMPLETED'")
+    Long getTotalPagesReadByUserId(@Param("userId") Long userId);
 }

@@ -87,12 +87,30 @@ public class UserBookService {
 
     @Transactional(readOnly = true)
     public UserReadingStatsDTO getUserReadingStats(Long userId) {
-        if (!userRepository.existsById(userId)) {
-            throw new UserNotFoundException("User not found with id: " + userId);
-        }
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> UserNotFoundException.byId(userId));
 
-        // Use custom repository methods or native queries for statistics
-        return userBookRepository.getUserReadingStats(userId);
+        Long completedBooks = userBookRepository.countCompletedBooksByUserId(userId);
+        Long readingBooks = userBookRepository.countReadingBooksByUserId(userId);
+        Long wantToReadBooks = userBookRepository.countWantToReadBooksByUserId(userId);
+        Double averageRating = userBookRepository.getAverageRatingByUserId(userId);
+        Long totalPages = userBookRepository.getTotalPagesReadByUserId(userId);
+
+        completedBooks = completedBooks != null ? completedBooks : 0L;
+        readingBooks = readingBooks != null ? readingBooks : 0L;
+        wantToReadBooks = wantToReadBooks != null ? wantToReadBooks : 0L;
+        totalPages = totalPages != null ? totalPages : 0L;
+
+        UserReadingStatsDTO stats = new UserReadingStatsDTO();
+        stats.setUserId(userId);
+        stats.setUsername(user.getUsername());
+        stats.setBooksCompleted(completedBooks.intValue());
+        stats.setBooksCurrentlyReading(readingBooks.intValue());
+        stats.setBooksWantToRead(wantToReadBooks.intValue());
+        stats.setAverageRating(averageRating);
+        stats.setTotalPages(totalPages.intValue());
+
+        return stats;
     }
 
     public void removeBookFromUserLibrary(Long userId, Long userBookId) {
